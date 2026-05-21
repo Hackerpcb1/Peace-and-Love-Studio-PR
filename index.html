@@ -186,7 +186,7 @@
               </select>
               <div class="service-picker" id="b-service-picker">
                 <button type="button" id="b-service-trigger" class="service-picker-trigger" aria-expanded="false" aria-controls="b-service-dropdown">
-                  Selecciona uno o varios servicios
+                  <span data-i18n="servicePicker.placeholder">Selecciona uno o varios servicios</span>
                   <i class="fas fa-chevron-down"></i>
                 </button>
                 <div id="b-service-dropdown" class="service-picker-dropdown" hidden>
@@ -212,6 +212,15 @@
               </div>
             </div>
             <div id="availability-msg" class="availability-msg" aria-live="polite"></div>
+            <div class="booking-deposit-note" role="note" aria-label="Política de depósito">
+              <div class="booking-deposit-icon" aria-hidden="true">
+                <i class="fas fa-shield-heart"></i>
+              </div>
+              <div class="booking-deposit-copy">
+                <strong data-i18n="booking.depositTitle">Política de reserva</strong>
+                <p data-i18n="booking.depositText">Para asegurar su cita, se requiere un depósito de <span>$15.00</span>. Este depósito no es reembolsable y será aplicado a su servicio el día de la cita.</p>
+              </div>
+            </div>
             <div class="form-group">
               <label for="b-comments" data-i18n="form.comments">Comentarios adicionales</label>
               <textarea id="b-comments" name="comments" rows="3" placeholder="Algún diseño especial, referencia, alergias..."></textarea>
@@ -497,6 +506,18 @@
       <div class="gallery-modal-info">
         <h3 id="ba-title"></h3>
         <p id="ba-desc"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="service-image-modal" aria-modal="true" role="dialog" aria-hidden="true">
+    <div class="modal-content service-image-modal-content">
+      <button class="modal-close" id="service-image-modal-close" aria-label="Cerrar"><i class="fas fa-times"></i></button>
+      <div class="service-image-modal-body">
+        <img id="service-image-preview" src="" alt="" />
+      </div>
+      <div class="service-image-modal-info">
+        <h3 id="service-image-title"></h3>
       </div>
     </div>
   </div>

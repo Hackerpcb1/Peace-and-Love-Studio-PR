@@ -7,10 +7,12 @@
 
 const EMAILJS_PUBLIC_KEY = 'W1xc7kSOTl9jfEb9d';
 const EMAILJS_SERVICE_ID = 'service_kqo64in';
-const EMAILJS_BOOKING_TEMPLATE_ID = 'template_n20fzb4';
-const EMAILJS_SUGGESTION_TEMPLATE_ID = 'template_vcm5vas';
+const EMAILJS_BOOKING_ADMIN_TEMPLATE_ID = 'template_n20fzb4';
+const EMAILJS_BOOKING_CLIENT_TEMPLATE_ID = 'template_vcm5vas';
+const EMAILJS_SUGGESTION_TEMPLATE_ID = '';
 const BUSINESS_EMAIL = 'peaceandlovestudiopr@gmail.com';
 let emailJsReady = false;
+let bookingSubmissionInFlight = false;
 const DEFAULT_PUBLIC_CONFIG = {
   name: 'Peace and Love Studio PR',
   phone: '787-228-4063',
@@ -125,11 +127,16 @@ const TRANSLATIONS = {
     'availability.unavailable': '✗ Este espacio no está disponible. Por favor selecciona otra fecha u hora.',
     'services.note': 'Los precios pueden variar según el largo, diseño, condición natural y estilo solicitado. Para más información o disponibilidad, comunícate con Peace and Love Studio PR.',
     'services.whatsapp': 'Consultar por WhatsApp',
+    'servicePicker.placeholder': 'Selecciona uno o varios servicios',
+    'booking.depositTitle': 'Política de reserva',
+    'booking.depositText': 'Para asegurar su cita, se requiere un depósito de <strong>$15.00</strong>. Este depósito no es reembolsable y será aplicado a su servicio el día de la cita.',
     'gallery.tag': 'Nuestro trabajo', 'gallery.title': 'Antes & Después',
     'gallery.subtitle': 'Desliza para descubrir la transformación.',
     'gallery.all': 'Todos', 'gallery.manicura': 'Uñas', 'gallery.gel': 'Gel',
     'gallery.acrilico': 'Acrílico', 'gallery.pestanas': 'Pestañas', 'gallery.pedicura': 'Pedicura',
     'gallery.before': 'Antes', 'gallery.after': 'Después', 'gallery.empty': 'No hay trabajos en la galería todavía.',
+    'gallery.prev': 'Anterior', 'gallery.next': 'Siguiente',
+    'calendar.prev': 'Mes anterior', 'calendar.next': 'Mes siguiente',
     'reviews.tag': 'Testimonios', 'reviews.title': 'Muro de Amor',
     'reviews.subtitle': 'Palabras reales de clientas que amamos.',
     'reviews.shareTitle': '¿Quieres compartir tu experiencia?',
@@ -188,11 +195,16 @@ const TRANSLATIONS = {
     'availability.unavailable': '✗ This time slot is not available. Please select a different date or time.',
     'services.note': 'Prices may vary depending on length, design, natural condition, and requested style. For more information or availability, contact Peace and Love Studio PR.',
     'services.whatsapp': 'Inquiry via WhatsApp',
+    'servicePicker.placeholder': 'Select one or more services',
+    'booking.depositTitle': 'Reservation policy',
+    'booking.depositText': 'To secure your appointment, a deposit of <strong>$15.00</strong> is required. This deposit is non-refundable and will be applied to your service on the day of the appointment.',
     'gallery.tag': 'Our work', 'gallery.title': 'Before & After',
     'gallery.subtitle': 'Slide to discover the transformation.',
     'gallery.all': 'All', 'gallery.manicura': 'Nails', 'gallery.gel': 'Gel',
     'gallery.acrilico': 'Acrylic', 'gallery.pestanas': 'Lashes', 'gallery.pedicura': 'Pedicure',
     'gallery.before': 'Before', 'gallery.after': 'After', 'gallery.empty': 'No gallery items yet.',
+    'gallery.prev': 'Previous', 'gallery.next': 'Next',
+    'calendar.prev': 'Previous month', 'calendar.next': 'Next month',
     'reviews.tag': 'Testimonials', 'reviews.title': 'Love Wall',
     'reviews.subtitle': 'Real words from clients we love.',
     'reviews.shareTitle': 'Want to share your experience?',
@@ -230,25 +242,25 @@ const TRANSLATIONS = {
    ============================================================ */
 const DEFAULT_SERVICES = [
   // UÑAS EN GEL / HARD GEL
-  { id: 's1', category: 'gel', name: 'Full Set Gel (Cortas)', nameEn: 'Gel Full Set (Short)', price: 45, icon: 'fas fa-hand-sparkles', active: true },
-  { id: 's2', category: 'gel', name: 'Full Set Gel (Medianas)', nameEn: 'Gel Full Set (Medium)', price: 50, icon: 'fas fa-hand-sparkles', active: true },
-  { id: 's3', category: 'gel', name: 'Full Set Gel (Largas)', nameEn: 'Gel Full Set (Long)', price: 55, icon: 'fas fa-hand-sparkles', active: true },
-  { id: 's4', category: 'gel', name: 'Manicura Pro', nameEn: 'Pro Manicure', price: 35, icon: 'fas fa-hand-sparkles', active: true },
-  { id: 's5', category: 'gel', name: 'Pedicura Jelly Spa', nameEn: 'Jelly Spa Pedicure', price: 60, icon: 'fas fa-spa', active: true },
+  { id: 's1', category: 'gel', name: 'Full Set Gel (Cortas)', nameEn: 'Gel Full Set (Short)', price: 45, icon: 'fas fa-hand-sparkles', image: 'galeria/image1-despues.jpg', active: true },
+  { id: 's2', category: 'gel', name: 'Full Set Gel (Medianas)', nameEn: 'Gel Full Set (Medium)', price: 50, icon: 'fas fa-hand-sparkles', image: 'galeria/image2-despues-rubberbase.jpg', active: true },
+  { id: 's3', category: 'gel', name: 'Full Set Gel (Largas)', nameEn: 'Gel Full Set (Long)', price: 55, icon: 'fas fa-hand-sparkles', image: 'galeria/image3-despues.jpg', active: true },
+  { id: 's4', category: 'gel', name: 'Manicura Pro', nameEn: 'Pro Manicure', price: 35, icon: 'fas fa-hand-sparkles', image: 'galeria/image4-despues.jpg', active: true },
+  { id: 's5', category: 'gel', name: 'Pedicura Jelly Spa', nameEn: 'Jelly Spa Pedicure', price: 60, icon: 'fas fa-spa', image: '', active: true },
   // EXTENSIONES DE PESTAÑAS
-  { id: 's6', category: 'lashes', name: 'Extensiones YY', nameEn: 'YY Extensions', price: 125, icon: 'fas fa-eye', active: true },
-  { id: 's7', category: 'lashes', name: 'Extensiones Fibras Tecnológicas', nameEn: 'Technological Fiber Extensions', price: 150, icon: 'fas fa-eye', active: true },
+  { id: 's6', category: 'lashes', name: 'Extensiones YY', nameEn: 'YY Extensions', price: 125, icon: 'fas fa-eye', image: '', active: true },
+  { id: 's7', category: 'lashes', name: 'Extensiones Fibras Tecnológicas', nameEn: 'Technological Fiber Extensions', price: 150, icon: 'fas fa-eye', image: '', active: true },
   // RETOQUES DE PESTAÑAS
-  { id: 's8', category: 'refills', name: 'Retoque (2 semanas)', nameEn: 'Refill (2 weeks)', price: 80, icon: 'fas fa-clock', active: true },
-  { id: 's9', category: 'refills', name: 'Retoque (3 semanas)', nameEn: 'Refill (3 weeks)', price: 90, icon: 'fas fa-clock', active: true },
-  { id: 's10', category: 'refills', name: 'Retoque (4 semanas)', nameEn: 'Refill (4 weeks)', price: 0, icon: 'fas fa-clock', active: true, description: 'Full Set nuevo', descriptionEn: 'New Full Set' },
+  { id: 's8', category: 'refills', name: 'Retoque (2 semanas)', nameEn: 'Refill (2 weeks)', price: 80, icon: 'fas fa-clock', image: '', active: true },
+  { id: 's9', category: 'refills', name: 'Retoque (3 semanas)', nameEn: 'Refill (3 weeks)', price: 90, icon: 'fas fa-clock', image: '', active: true },
+  { id: 's10', category: 'refills', name: 'Retoque (4 semanas)', nameEn: 'Refill (4 weeks)', price: 0, icon: 'fas fa-clock', image: '', active: true, description: 'Full Set nuevo', descriptionEn: 'New Full Set' },
   // CEJAS Y DEPILACIÓN
-  { id: 's11', category: 'brows', name: 'Depilación de cejas con cera', nameEn: 'Eyebrow Waxing', price: 15, icon: 'fas fa-eye-dropper', active: true },
-  { id: 's12', category: 'brows', name: 'Depilación + Diseño + Tinte', nameEn: 'Wax + Design + Tint', price: 40, icon: 'fas fa-magic', active: true },
-  { id: 's13', category: 'brows', name: 'Depilación, Diseño, Tinte y Lamination', nameEn: 'Wax, Design, Tint & Lamination', price: 80, icon: 'fas fa-sparkles', active: true },
-  { id: 's14', category: 'brows', name: 'Diseño + Tinte', nameEn: 'Design + Tint', price: 35, icon: 'fas fa-paint-brush', active: true },
-  { id: 's15', category: 'brows', name: 'Brow Lamination', nameEn: 'Brow Lamination', price: 100, icon: 'fas fa-arrows-alt-v', active: true },
-  { id: 's16', category: 'brows', name: 'Lash Lifting', nameEn: 'Lash Lifting', price: 90, icon: 'fas fa-eye', active: true }
+  { id: 's11', category: 'brows', name: 'Depilación de cejas con cera', nameEn: 'Eyebrow Waxing', price: 15, icon: 'fas fa-eye-dropper', image: '', active: true },
+  { id: 's12', category: 'brows', name: 'Depilación + Diseño + Tinte', nameEn: 'Wax + Design + Tint', price: 40, icon: 'fas fa-magic', image: '', active: true },
+  { id: 's13', category: 'brows', name: 'Depilación, Diseño, Tinte y Lamination', nameEn: 'Wax, Design, Tint & Lamination', price: 80, icon: 'fas fa-sparkles', image: '', active: true },
+  { id: 's14', category: 'brows', name: 'Diseño + Tinte', nameEn: 'Design + Tint', price: 35, icon: 'fas fa-paint-brush', image: '', active: true },
+  { id: 's15', category: 'brows', name: 'Brow Lamination', nameEn: 'Brow Lamination', price: 100, icon: 'fas fa-arrows-alt-v', image: '', active: true },
+  { id: 's16', category: 'brows', name: 'Lash Lifting', nameEn: 'Lash Lifting', price: 90, icon: 'fas fa-eye', image: '', active: true }
 ];
 
 const DEFAULT_FAQS = [
@@ -507,10 +519,10 @@ const DEFAULT_GALLERY = [
 ];
 
 const DEFAULT_TESTIMONIALS = [
-  { id: 't1', name: 'María González', service: 'Gel', rating: 5, comment: '¡Me encantó el servicio! Mis uñas quedaron perfectas y el ambiente del estudio es súper relajante. 100% recomendado.', date: '2025-01-15', status: 'aprobado' },
-  { id: 't2', name: 'Carmen Rivera', service: 'Extensiones de pestañas', rating: 5, comment: 'Las mejores pestañas que me han hecho en mi vida. Se ven naturales y duraron muchísimo tiempo.', date: '2025-01-20', status: 'aprobado' },
-  { id: 't3', name: 'Sofía Torres', service: 'Acrílico', rating: 4, comment: 'Excelente trabajo y muy profesionales. Los diseños son únicos y el trato es maravilloso.', date: '2025-02-01', status: 'aprobado' },
-  { id: 't4', name: 'Valeria Díaz', service: 'Manicura', rating: 5, comment: 'Un lugar lleno de paz y amor, tal como su nombre. Siempre salgo feliz.', date: '2025-02-14', status: 'pendiente' },
+  { id: 't1', name: 'María González', service: 'Gel', serviceEn: 'Gel', rating: 5, comment: '¡Me encantó el servicio! Mis uñas quedaron perfectas y el ambiente del estudio es súper relajante. 100% recomendado.', commentEn: 'I loved the service! My nails looked perfect and the studio atmosphere is super relaxing. 100% recommended.', date: '2025-01-15', status: 'aprobado' },
+  { id: 't2', name: 'Carmen Rivera', service: 'Extensiones de pestañas', serviceEn: 'Eyelash extensions', rating: 5, comment: 'Las mejores pestañas que me han hecho en mi vida. Se ven naturales y duraron muchísimo tiempo.', commentEn: 'The best lashes I have ever had. They look natural and lasted a very long time.', date: '2025-01-20', status: 'aprobado' },
+  { id: 't3', name: 'Sofía Torres', service: 'Acrílico', serviceEn: 'Acrylic nails', rating: 4, comment: 'Excelente trabajo y muy profesionales. Los diseños son únicos y el trato es maravilloso.', commentEn: 'Excellent work and very professional. The designs are unique and the service is wonderful.', date: '2025-02-01', status: 'aprobado' },
+  { id: 't4', name: 'Valeria Díaz', service: 'Manicura', serviceEn: 'Manicure', rating: 5, comment: 'Un lugar lleno de paz y amor, tal como su nombre. Siempre salgo feliz.', commentEn: 'A place full of peace and love, just like its name. I always leave happy.', date: '2025-02-14', status: 'pendiente' },
 ];
 
 const DEFAULT_APPOINTMENTS = [
@@ -566,6 +578,7 @@ function mergeDefaultServices(storedServices) {
 
     existing.category = existing.category || service.category;
     existing.icon = existing.icon || service.icon;
+    existing.image = typeof existing.image === 'string' ? existing.image : (service.image || '');
     existing.name = existing.name || service.name;
     existing.nameEn = existing.nameEn || service.nameEn;
     existing.active = true;
@@ -675,9 +688,43 @@ function setLang(lang) {
   renderSchedule();
   populateServiceSelects();
   renderLoveWall();
+  ensureTestimonialTranslations();
   renderGallery(currentCat);
   document.getElementById('lang-es').classList.toggle('active', lang === 'es');
   document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+}
+
+function ensureTestimonialTranslations() {
+  try {
+    const stored = getData('pal_testimonials', null);
+    const items = Array.isArray(stored) ? stored : getData('pal_testimonials', DEFAULT_TESTIMONIALS).slice();
+    const services = (typeof getServicesData === 'function') ? getServicesData() : getData('pal_services', DEFAULT_SERVICES);
+    const defaultMap = {};
+    DEFAULT_TESTIMONIALS.forEach(d => { if (d.id) defaultMap[d.id] = d; });
+    let changed = false;
+    items.forEach(it => {
+      if (!it) return;
+      if (!it.serviceEn) {
+        if (it.id && defaultMap[it.id] && defaultMap[it.id].serviceEn) {
+          it.serviceEn = defaultMap[it.id].serviceEn; changed = true;
+        } else if (services && services.find) {
+          const svc = services.find(s => s.name === it.service || s.nameEn === it.service);
+          if (svc && svc.nameEn) { it.serviceEn = svc.nameEn; changed = true; }
+        }
+      }
+      if (!it.commentEn) {
+        if (it.id && defaultMap[it.id] && defaultMap[it.id].commentEn) {
+          it.commentEn = defaultMap[it.id].commentEn; changed = true;
+        } else if (it.comment) {
+          // leave empty string to indicate untranslated, but ensure property exists
+          it.commentEn = it.commentEn || '';
+        }
+      }
+    });
+    if (changed) setData('pal_testimonials', items);
+  } catch (e) {
+    console.warn('ensureTestimonialTranslations error', e);
+  }
 }
 
 /* ============================================================
@@ -807,14 +854,25 @@ function renderServices() {
       const priceDisplay = s.id === 's10'
         ? (currentLang === 'en' ? 'New Full Set' : 'Full Set nuevo')
         : `$${s.price}`;
+      const imageAlt = currentLang === 'en' ? `Image for ${name}` : `Imagen de ${name}`;
+      const hasImage = !!String(s.image || '').trim();
+      const viewImageLabel = currentLang === 'en' ? 'View image' : 'Ver imagen';
+      const placeholderLabel = currentLang === 'en' ? 'Add service image' : 'Agregar imagen del servicio';
       return `
         <div class="service-card" data-service="${s.name}">
-          <div class="service-icon"><i class="${s.icon || 'fas fa-hand-sparkles'}"></i></div>
+          <div class="service-icon ${hasImage ? 'has-image' : ''}">
+            ${hasImage
+              ? `<img class="service-icon-image" src="${s.image}" alt="${imageAlt}" loading="lazy" />`
+              : `<span class="service-icon-placeholder">${placeholderLabel}</span>`}
+          </div>
           <div class="service-price" style="font-weight: 700; color: var(--primary); font-size: 1.4rem; margin-bottom: 5px;">${priceDisplay}</div>
           <h3 style="margin-bottom: 15px;">${name}</h3>
           ${desc ? `<p class="service-desc" style="margin-bottom:12px; opacity:0.85">${desc}</p>` : ''}
           <button class="btn-book-service" onclick="selectService('${s.name}')">
             <i class="fas fa-calendar-plus"></i> ${t('services.bookBtn')}
+          </button>
+          <button class="btn-service-view-image" type="button" onclick="openServiceImageModal('${s.id}')" ${hasImage ? '' : 'disabled'}>
+            <i class="fas fa-image"></i> ${viewImageLabel}
           </button>
         </div>`;
     }).join('');
@@ -861,6 +919,35 @@ function selectService(name) {
     closeBookingServicePicker();
     document.getElementById('reservar').scrollIntoView({ behavior: 'smooth' });
   }
+}
+
+function openServiceImageModal(serviceId) {
+  const service = getServicesData().find(item => item.id === serviceId);
+  if (!service || !service.image) return;
+
+  const modal = document.getElementById('service-image-modal');
+  const image = document.getElementById('service-image-preview');
+  const title = document.getElementById('service-image-title');
+  if (!modal || !image || !title) return;
+
+  const serviceName = currentLang === 'en' && service.nameEn ? service.nameEn : service.name;
+  image.src = service.image;
+  image.alt = currentLang === 'en' ? `Image for ${serviceName}` : `Imagen de ${serviceName}`;
+  title.textContent = serviceName || '';
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeServiceImageModal() {
+  const modal = document.getElementById('service-image-modal');
+  const image = document.getElementById('service-image-preview');
+  if (!modal || !image) return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+  image.src = '';
+  image.alt = '';
+  document.body.style.overflow = '';
 }
 
 function populateServiceSelects() {
@@ -1134,9 +1221,9 @@ function renderMiniCalendar() {
 
   let html = `
     <div class="mini-cal-header">
-      <button class="mini-cal-nav" id="cal-prev" aria-label="Mes anterior"><i class="fas fa-chevron-left"></i></button>
+      <button class="mini-cal-nav" id="cal-prev" aria-label="${t('calendar.prev')}"><i class="fas fa-chevron-left"></i></button>
       <h4>${monthLabel} ${year}</h4>
-      <button class="mini-cal-nav" id="cal-next" aria-label="Mes siguiente"><i class="fas fa-chevron-right"></i></button>
+      <button class="mini-cal-nav" id="cal-next" aria-label="${t('calendar.next')}"><i class="fas fa-chevron-right"></i></button>
     </div>
     <div class="mini-cal-grid">
       ${dowLabels.map(d => `<div class="cal-dow">${d}</div>`).join('')}
@@ -1254,7 +1341,10 @@ function initBookingForm() {
 
 function submitBooking(e) {
   e.preventDefault();
+  if (bookingSubmissionInFlight) return;
+
   const form = e.target;
+  const submitButton = document.getElementById('submit-booking');
   const name = form.name.value.trim();
   const phone = form.phone.value.trim();
   const email = form.email.value.trim();
@@ -1294,6 +1384,12 @@ function submitBooking(e) {
   if (taken || isTimeUnavailable(date, time)) {
     document.getElementById('err-time').textContent = t('availability.unavailable');
     return;
+  }
+
+  bookingSubmissionInFlight = true;
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.setAttribute('aria-busy', 'true');
   }
 
   const newAppt = {
@@ -1356,13 +1452,13 @@ function submitBooking(e) {
     recipient_role: 'client'
   };
 
-  sendEmailJs(EMAILJS_BOOKING_TEMPLATE_ID, bookingEmailParams)
+  const businessEmailRequest = sendEmailJs(EMAILJS_BOOKING_ADMIN_TEMPLATE_ID, bookingEmailParams)
     .catch(err => {
       console.warn('EmailJS booking send failed:', err);
       showToast('La cita se guardo, pero el correo al negocio no se pudo enviar.', 'error');
     });
 
-  sendEmailJs(EMAILJS_BOOKING_TEMPLATE_ID, clientConfirmationParams)
+  const clientEmailRequest = sendEmailJs(EMAILJS_BOOKING_CLIENT_TEMPLATE_ID, clientConfirmationParams)
     .catch(err => {
       console.warn('EmailJS client confirmation failed:', err);
       showToast('La cita se guardo, pero el correo de confirmacion al cliente no se pudo enviar.', 'error');
@@ -1375,6 +1471,14 @@ function submitBooking(e) {
   document.getElementById('availability-msg').className = 'availability-msg';
   document.getElementById('availability-msg').textContent = '';
   renderMiniCalendar();
+
+  Promise.allSettled([businessEmailRequest, clientEmailRequest]).finally(() => {
+    bookingSubmissionInFlight = false;
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.removeAttribute('aria-busy');
+    }
+  });
 
   /* ============================================================
      EmailJS Integration — Configure below:
@@ -1438,7 +1542,7 @@ function renderGallery(cat = 'all') {
 
   grid.innerHTML = `
     <div class="gallery-slideshow-shell">
-      <button class="gallery-slide-nav prev" type="button" aria-label="Anterior" onclick="changeGallerySlide(-1)">
+      <button class="gallery-slide-nav prev" type="button" aria-label="${t('gallery.prev')}" onclick="changeGallerySlide(-1)">
         <i class="fas fa-chevron-left"></i>
       </button>
       <div class="gallery-slides-track">
@@ -1450,12 +1554,12 @@ function renderGallery(cat = 'all') {
               <article class="gallery-item gallery-comparison-card" onclick="openGalleryModal('${g.id}')">
                 <div class="gallery-comparison-media">
                   <div class="gallery-compare-side">
-                    <img class="gallery-thumb-img" src="${g.beforeImg}" alt="Antes" loading="lazy" />
-                    <span class="gallery-compare-label">Antes</span>
+                    <img class="gallery-thumb-img" src="${g.beforeImg}" alt="${t('gallery.before')}" loading="lazy" />
+                    <span class="gallery-compare-label">${t('gallery.before')}</span>
                   </div>
                   <div class="gallery-compare-side">
-                    <img class="gallery-thumb-img" src="${g.afterImg}" alt="Después" loading="lazy" />
-                    <span class="gallery-compare-label">Después</span>
+                    <img class="gallery-thumb-img" src="${g.afterImg}" alt="${t('gallery.after')}" loading="lazy" />
+                    <span class="gallery-compare-label">${t('gallery.after')}</span>
                   </div>
                   <div class="gallery-overlay"><i class="fas fa-expand gallery-overlay-icon"></i></div>
                 </div>
@@ -1467,7 +1571,7 @@ function renderGallery(cat = 'all') {
             </article>`;
         }).join('')}
       </div>
-      <button class="gallery-slide-nav next" type="button" aria-label="Siguiente" onclick="changeGallerySlide(1)">
+      <button class="gallery-slide-nav next" type="button" aria-label="${t('gallery.next')}" onclick="changeGallerySlide(1)">
         <i class="fas fa-chevron-right"></i>
       </button>
       <div class="gallery-slide-dots">
@@ -1475,7 +1579,7 @@ function renderGallery(cat = 'all') {
           <button
             type="button"
             class="gallery-slide-dot ${index === currentGallerySlide ? 'active' : ''}"
-            aria-label="Ir a slide ${index + 1}"
+            aria-label="${currentLang === 'en' ? 'Go to slide ' + (index + 1) : 'Ir a slide ' + (index + 1)}"
             onclick="setGallerySlide(${index})"></button>
         `).join('')}
       </div>
@@ -1594,6 +1698,14 @@ function initGalleryModal() {
   modal.addEventListener('click', e => { if (e.target === modal) closeGalleryModal(); });
 }
 
+function initServiceImageModal() {
+  const modal = document.getElementById('service-image-modal');
+  const closeButton = document.getElementById('service-image-modal-close');
+  if (!modal || !closeButton) return;
+  closeButton.addEventListener('click', closeServiceImageModal);
+  modal.addEventListener('click', e => { if (e.target === modal) closeServiceImageModal(); });
+}
+
 function closeGalleryModal() {
   const modal = document.getElementById('gallery-modal');
   modal.classList.remove('open');
@@ -1620,14 +1732,16 @@ function renderLoveWall() {
     const stars = '★'.repeat(item.rating) + '☆'.repeat(5 - item.rating);
     const initials = item.name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
     const date = new Date(item.date).toLocaleDateString(currentLang === 'es' ? 'es-PR' : 'en-US', { year:'numeric', month:'short', day:'numeric' });
+    const serviceLabel = currentLang === 'en' && item.serviceEn ? item.serviceEn : item.service;
+    const commentText = currentLang === 'en' && item.commentEn ? item.commentEn : item.comment;
     return `
       <div class="love-card">
         <div class="love-top">
           <div class="love-avatar">${initials}</div>
           <div class="love-stars">${stars}</div>
         </div>
-        <span class="love-service">${item.service}</span>
-        <p class="love-comment">${item.comment}</p>
+        <span class="love-service">${serviceLabel}</span>
+        <p class="love-comment">${commentText}</p>
         <div class="love-footer">
           <span class="love-name">${item.name}</span>
           <span class="love-date">${date}</span>
@@ -1662,7 +1776,7 @@ function initTestimonyForm() {
 
     const testimonials = getData('pal_testimonials', DEFAULT_TESTIMONIALS);
     testimonials.push({
-      id: 'tc' + Date.now(), name, service, rating: r, comment,
+      id: 'tc' + Date.now(), name, service, serviceEn: '', rating: r, comment, commentEn: '',
       date: new Date().toISOString().split('T')[0], status: 'pendiente'
     });
     setData('pal_testimonials', testimonials);
@@ -1734,17 +1848,19 @@ function initSuggestionForm() {
     });
     setData('pal_suggestions', suggestions);
 
-    sendEmailJs(EMAILJS_SUGGESTION_TEMPLATE_ID, {
-      name: name,
-      email: email || 'No provisto',
-      type: type,
-      message: message,
-      business_name: getBusinessName(),
-      submitted_at: formatEmailTimestamp()
-    }).catch(err => {
-      console.warn('EmailJS suggestion send failed:', err);
-      showToast('La sugerencia se guardo, pero el correo no se pudo enviar.', 'error');
-    });
+    if (EMAILJS_SUGGESTION_TEMPLATE_ID) {
+      sendEmailJs(EMAILJS_SUGGESTION_TEMPLATE_ID, {
+        name: name,
+        email: email || 'No provisto',
+        type: type,
+        message: message,
+        business_name: getBusinessName(),
+        submitted_at: formatEmailTimestamp()
+      }).catch(err => {
+        console.warn('EmailJS suggestion send failed:', err);
+        showToast('La sugerencia se guardo, pero el correo no se pudo enviar.', 'error');
+      });
+    }
 
     showToast(t('suggestions.success'), 'success');
     form.reset();
@@ -1966,6 +2082,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderGallery('all');
   initGalleryFilters();
   initGalleryModal();
+  initServiceImageModal();
+  ensureTestimonialTranslations();
   renderLoveWall();
   initTestimonyForm();
   renderFAQ();
