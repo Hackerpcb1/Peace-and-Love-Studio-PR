@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel de Administración — Peace and Love Studio PR</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="admin.css" />
+  <style>
+    .admin-month-calendar-grid { border: 1px solid #eee; border-radius: 8px; overflow: hidden; margin-top: 15px; }
+    .calendar-month-header { display: flex; align-items: center; justify-content: space-between; padding: 15px; background: #fff; border-bottom: 1px solid #eee; }
+    .admin-cal-month-header-row { display: grid; grid-template-columns: repeat(7, 1fr); background: #f8f9fa; border-bottom: 1px solid #eee; }
+    .cal-h-cell { padding: 10px; text-align: center; font-weight: 600; font-size: 0.8rem; color: #666; text-transform: uppercase; }
+    .admin-cal-month-body { display: grid; grid-template-columns: repeat(7, 1fr); background: #eee; gap: 1px; }
+    .cal-d-cell { background: #fff; min-height: 110px; padding: 8px; cursor: pointer; transition: background 0.2s; position: relative; }
+    .cal-d-cell:hover { background: #fafafa; }
+    .cal-d-cell.empty { background: #fdfdfd; cursor: default; }
+    .cal-d-num { font-weight: 700; font-size: 0.85rem; color: #333; margin-bottom: 6px; display: block; }
+    .cal-d-appts { display: flex; flex-direction: column; gap: 2px; }
+    .cal-d-appt { font-size: 0.65rem; padding: 2px 5px; background: #9f5a69; color: #fff; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cal-d-appt strong { font-weight: 800; margin-right: 2px; }
+    .cal-d-more { font-size: 0.6rem; color: #9f5a69; font-weight: bold; text-align: center; margin-top: 2px; }
+    @media (max-width: 992px) { .cal-d-cell { min-height: 70px; } .cal-d-appt { font-size: 0.55rem; } }
+  </style>
+</head>
+<body>
+
+<!-- ========== LOGIN SCREEN ========== -->
+<div id="login-screen" class="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <span class="logo-script">Peace & Love</span>
+      <span class="logo-sub">Studio PR — Admin</span>
+    </div>
+    <h2>Acceso al Panel</h2>
+    <p class="login-hint">Use admin / peace2026 para ingresar</p>
+    <!-- NOTA DE SEGURIDAD: Estas credenciales son SOLO para demostración.
+         En producción se debe usar autenticación segura con backend. -->
+    <form id="login-form" novalidate>
+      <div class="form-group">
+        <label for="login-user"><i class="fas fa-user"></i> Usuario</label>
+        <input type="text" id="login-user" name="username" placeholder="admin" autocomplete="username" />
+      </div>
+      <div class="form-group">
+        <label for="login-pass"><i class="fas fa-lock"></i> Contraseña</label>
+        <div class="pass-wrap">
+          <input type="password" id="login-pass" name="password" placeholder="••••••••" autocomplete="current-password" />
+          <button type="button" class="pass-toggle" id="pass-toggle" aria-label="Mostrar contraseña"><i class="fas fa-eye"></i></button>
+        </div>
+      </div>
+      <div id="login-error" class="login-error" aria-live="polite"></div>
+      <button type="submit" class="btn-login" id="login-submit">Ingresar <i class="fas fa-arrow-right"></i></button>
+    </form>
+    <a href="index.html" class="back-to-site"><i class="fas fa-arrow-left"></i> Volver al sitio</a>
+  </div>
+</div>
+
+<!-- ========== ADMIN PANEL ========== -->
+<div id="admin-panel" class="admin-panel hidden">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <img src="assets/admin-logo-placeholder.svg" alt="Logo del panel de administracion" class="sidebar-logo" />
+      <button class="sidebar-close" id="sidebar-close" aria-label="Cerrar sidebar"><i class="fas fa-times"></i></button>
+    </div>
+    <nav class="sidebar-nav">
+      <ul>
+        <li class="nav-category">Gestión</li>
+        <li><button class="nav-item active" data-section="dashboard"><i class="fas fa-home"></i> Inicio</button></li>
+        <li><button class="nav-item" data-section="appointments"><i class="fas fa-calendar-check"></i> Citas <span class="badge" id="badge-appointments">0</span></button></li>
+        <li><button class="nav-item" data-section="clients"><i class="fas fa-users"></i> Clientas</button></li>
+        <li><button class="nav-item" data-section="receipts"><i class="fas fa-receipt"></i> Facturación</button></li>
+        
+        <li class="nav-category">Contenido Web</li>
+        <li><button class="nav-item" data-section="services"><i class="fas fa-hand-sparkles"></i> Servicios</button></li>
+        <li><button class="nav-item" data-section="gallery"><i class="fas fa-images"></i> Galería</button></li>
+        <li><button class="nav-item" data-section="testimonials"><i class="fas fa-star"></i> Testimonios</button></li>
+        <li><button class="nav-item" data-section="faq"><i class="fas fa-question-circle"></i> FAQ</button></li>
+        
+        <li class="nav-category">Comunicación</li>
+        <li><button class="nav-item" data-section="suggestions"><i class="fas fa-comments"></i> Sugerencias <span class="badge warning" id="badge-sug">0</span></button></li>
+        
+        <li class="nav-category">Sistema</li>
+        <li><button class="nav-item" data-section="page-editor"><i class="fas fa-edit"></i> Editor Visual</button></li>
+        <li><button class="nav-item" data-section="config"><i class="fas fa-cog"></i> Ajustes</button></li>
+        
+        <li class="nav-sep"></li>
+        <li><button class="nav-item logout-btn" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</button></li>
+      </ul>
+    </nav>
+  </aside>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <!-- MAIN AREA -->
+  <div class="admin-main">
+    <!-- TOPBAR -->
+    <header class="admin-topbar">
+      <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú"><i class="fas fa-bars"></i></button>
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-actions">
+        <a href="index.html" target="_blank" rel="noopener noreferrer" class="btn-view-site" title="Ver sitio"><i class="fas fa-external-link-alt"></i> Ver sitio</a>
+        <div class="admin-user"><i class="fas fa-user-circle"></i> Admin</div>
+      </div>
+    </header>
+
+    <!-- TOAST -->
+    <div id="admin-toast-container" aria-live="polite"></div>
+
+    <!-- CONTENT AREA -->
+    <main class="admin-content" id="admin-content">
+
+      <!-- ===== DASHBOARD ===== -->
+      <section class="admin-section" id="sec-dashboard">
+        <div class="stats-grid" id="stats-grid"><!-- JS --></div>
+        <div class="dashboard-detail-grid">
+          <div class="admin-card dashboard-card dashboard-card-wide">
+            <div class="dashboard-card-head">
+              <div>
+                <h4>Resumen operativo</h4>
+                <p>Indicadores clave del panel y del flujo de citas.</p>
+              </div>
+            </div>
+            <div class="kpi-strip" id="dashboard-kpis"><!-- JS --></div>
+          </div>
+          <div class="admin-card dashboard-card">
+            <div class="dashboard-card-head">
+              <div>
+                <h4>Estado de citas</h4>
+                <p>Distribucion actual de solicitudes.</p>
+              </div>
+            </div>
+            <div class="status-breakdown" id="dashboard-status-breakdown"><!-- JS --></div>
+          </div>
+          <div class="admin-card dashboard-card">
+            <div class="dashboard-card-head">
+              <div>
+                <h4>Proximas citas</h4>
+                <p>Agenda inmediata para dar seguimiento.</p>
+              </div>
+            </div>
+            <div class="compact-list" id="dashboard-upcoming"><!-- JS --></div>
+          </div>
+          <div class="admin-card dashboard-card">
+            <div class="dashboard-card-head">
+              <div>
+                <h4>Servicios destacados</h4>
+                <p>Los mas pedidos y su participacion.</p>
+              </div>
+            </div>
+            <div class="compact-list" id="dashboard-top-services"><!-- JS --></div>
+          </div>
+          <div class="admin-card dashboard-card">
+            <div class="dashboard-card-head">
+              <div>
+                <h4>Actividad reciente</h4>
+                <p>Nuevas entradas del sistema.</p>
+              </div>
+            </div>
+            <div class="compact-list" id="dashboard-activity"><!-- JS --></div>
+          </div>
+          <div class="admin-card dashboard-card dashboard-card-wide">
+            <div class="dashboard-card-head">
+              <div>
+                <h4>Reportes</h4>
+                <p>Resumen por semana, mes o rango de fechas personalizado.</p>
+              </div>
+            </div>
+            <div class="report-toolbar">
+              <input type="date" id="report-start" class="admin-input" />
+              <input type="date" id="report-end" class="admin-input" />
+              <button class="btn-sm btn-primary" onclick="setReportRange('week')">Esta semana</button>
+              <button class="btn-sm btn-primary" onclick="setReportRange('month')">Este mes</button>
+              <button class="btn-sm btn-secondary" onclick="applyReportRange()">Aplicar</button>
+            </div>
+            <div class="report-stats-grid" id="report-stats-grid"><!-- JS --></div>
+            <div class="report-breakdown-grid">
+              <div class="report-panel">
+                <h4>Ranking de servicios</h4>
+                <div class="compact-list" id="report-service-ranking"><!-- JS --></div>
+              </div>
+              <div class="report-panel">
+                <h4>Ingresos por rango</h4>
+                <div class="compact-list" id="report-income-breakdown"><!-- JS --></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h4>Servicios más solicitados</h4>
+            <canvas id="chart-services"></canvas>
+          </div>
+          <div class="chart-card">
+            <h4>Estado de citas</h4>
+            <canvas id="chart-status"></canvas>
+          </div>
+          <div class="chart-card chart-wide">
+            <h4>Citas por día (últimos 14 días)</h4>
+            <canvas id="chart-timeline"></canvas>
+          </div>
+          <div class="chart-card">
+            <h4>Horas más solicitadas</h4>
+            <canvas id="chart-hours"></canvas>
+          </div>
+        </div>
+        <div class="recent-tables">
+          <div class="recent-card">
+            <h4>Últimas solicitudes de cita</h4>
+            <div id="recent-appointments"><!-- JS --></div>
+          </div>
+          <div class="recent-card">
+            <h4>Últimos testimonios</h4>
+            <div id="recent-testimonials"><!-- JS --></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== APPOINTMENTS ===== -->
+      <section class="admin-section hidden" id="sec-appointments">
+        <div class="section-toolbar">
+          <h3>Gestión de Citas</h3>
+          <div class="toolbar-actions">
+            <input type="search" id="appt-search" placeholder="Buscar clienta..." class="admin-search" />
+            <select id="appt-filter-status" class="admin-select">
+              <option value="">Todos los estados</option>
+              <option value="pendiente">Pendiente</option>
+              <option value="en proceso">En proceso</option>
+              <option value="aprobada">Aprobada</option>
+              <option value="rechazada">Rechazada</option>
+            </select>
+            <select id="appt-filter-service" class="admin-select">
+              <option value="">Todos los servicios</option>
+            </select>
+            <button class="btn-export" onclick="exportCSV('appointments')"><i class="fas fa-download"></i> CSV</button>
+            <button class="btn-export" onclick="exportData('appointments', 'excel')"><i class="fas fa-file-excel"></i> Excel</button>
+            <button class="btn-export" onclick="exportData('appointments', 'pdf')"><i class="fas fa-file-pdf"></i> PDF</button>
+          </div>
+        </div>
+        <div class="table-wrap" id="appointments-table"><!-- JS --></div>
+      </section>
+
+      <!-- ===== CALENDAR ADMIN ===== -->
+      <section class="admin-section hidden" id="sec-calendar">
+        <div class="section-toolbar">
+          <h3>Gestión de Calendario</h3>
+        </div>
+
+        <!-- Calendario Mensual -->
+        <div class="admin-card" style="margin-bottom: 2rem;">
+          <div class="calendar-month-header">
+            <button class="btn-sm btn-secondary" onclick="changeAdminMonth(-1)"><i class="fas fa-chevron-left"></i> Anterior</button>
+            <h4 id="admin-month-title" style="margin:0">Cargando mes...</h4>
+            <button class="btn-sm btn-secondary" onclick="changeAdminMonth(1)">Siguiente <i class="fas fa-chevron-right"></i></button>
+          </div>
+          <div id="admin-month-calendar-grid" class="admin-month-calendar-grid"></div>
+        </div>
+
+        <div class="cal-admin-layout">
+          <div class="cal-admin-left">
+            <div id="cal-admin-rules-container"></div>
+          </div>
+          <div class="cal-admin-right">
+            <div class="admin-card">
+              <h4>Vista de citas por día</h4>
+              <input type="date" id="cal-view-date" class="admin-input" onchange="renderCalDayView()" />
+              <div id="cal-day-view"><!-- JS --></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== CLIENTS ===== -->
+      <section class="admin-section hidden" id="sec-clients">
+        <div class="section-toolbar">
+          <h3>Gestión de Clientas</h3>
+          <div class="toolbar-actions">
+            <input type="search" id="client-search" placeholder="Buscar..." class="admin-search" />
+            <select id="client-sort" class="admin-select">
+              <option value="appointments">Más citas</option>
+              <option value="recent">Más recientes</option>
+              <option value="name">Nombre A-Z</option>
+            </select>
+            <button class="btn-export" onclick="exportCSV('clients')"><i class="fas fa-download"></i> CSV</button>
+            <button class="btn-export" onclick="exportData('clients', 'excel')"><i class="fas fa-file-excel"></i> Excel</button>
+            <button class="btn-export" onclick="exportData('clients', 'pdf')"><i class="fas fa-file-pdf"></i> PDF</button>
+          </div>
+        </div>
+        <div class="table-wrap" id="clients-table"><!-- JS --></div>
+      </section>
+
+      <!-- ===== TESTIMONIALS ===== -->
+      <section class="admin-section hidden" id="sec-testimonials">
+        <div class="section-toolbar">
+          <h3>Gestión de Testimonios</h3>
+          <div class="toolbar-actions">
+            <select id="test-filter" class="admin-select">
+              <option value="">Todos</option>
+              <option value="pendiente">Pendientes</option>
+              <option value="aprobado">Aprobados</option>
+              <option value="rechazado">Rechazados</option>
+            </select>
+            <button class="btn-export" onclick="exportCSV('testimonials')"><i class="fas fa-download"></i> CSV</button>
+          </div>
+        </div>
+        <div class="table-wrap" id="testimonials-table"><!-- JS --></div>
+      </section>
+
+      <!-- ===== SUGGESTIONS ===== -->
+      <section class="admin-section hidden" id="sec-suggestions">
+        <div class="section-toolbar">
+          <h3>Gestión de Sugerencias</h3>
+          <div class="toolbar-actions">
+            <select id="sug-filter-status" class="admin-select">
+              <option value="">Todos</option>
+              <option value="nueva">Nuevas</option>
+              <option value="revisada">Revisadas</option>
+              <option value="archivada">Archivadas</option>
+            </select>
+            <select id="sug-filter-type" class="admin-select">
+              <option value="">Todos los tipos</option>
+              <option value="servicio">Servicio</option>
+              <option value="pagina">Página web</option>
+              <option value="atencion">Atención</option>
+              <option value="ambiente">Ambiente</option>
+              <option value="otro">Otro</option>
+            </select>
+            <button class="btn-export" onclick="exportCSV('suggestions')"><i class="fas fa-download"></i> CSV</button>
+          </div>
+        </div>
+        <div class="table-wrap" id="suggestions-table"><!-- JS --></div>
+      </section>
+
+      <!-- ===== GALLERY ===== -->
+      <section class="admin-section hidden" id="sec-gallery">
+        <div class="section-toolbar">
+          <h3>Gestión de Galería</h3>
+          <button class="btn-primary" onclick="openGalleryItemModal()"><i class="fas fa-plus"></i> Añadir trabajo</button>
+        </div>
+        <div class="gallery-admin-grid" id="gallery-admin-grid"><!-- JS --></div>
+      </section>
+
+      <!-- ===== SERVICES ===== -->
+      <section class="admin-section hidden" id="sec-services">
+        <div class="section-toolbar">
+          <h3>Gestión de Servicios</h3>
+          <button class="btn-primary" onclick="openServiceModal()"><i class="fas fa-plus"></i> Añadir servicio</button>
+        </div>
+        <div class="services-admin-grid" id="services-admin-grid"><!-- JS --></div>
+      </section>
+
+      <!-- ===== FAQ ===== -->
+      <section class="admin-section hidden" id="sec-faq">
+        <div class="section-toolbar">
+          <h3>Gestión de FAQ</h3>
+          <button class="btn-primary" onclick="openFAQModal()"><i class="fas fa-plus"></i> Añadir pregunta</button>
+        </div>
+        <div class="faq-admin-list" id="faq-admin-list"><!-- JS --></div>
+      </section>
+
+      <!-- ===== PAGE EDITOR ===== -->
+      <section class="admin-section hidden" id="sec-page-editor">
+        <div class="section-toolbar"><h3>Editar contenido del sitio</h3></div>
+        <div class="editor-grid">
+          <div class="admin-card">
+            <h4>Hero</h4>
+            <div class="form-group"><label>Título principal</label><input type="text" id="pe-heroTitle" class="admin-input" /></div>
+            <div class="form-group"><label>Subtítulo</label><input type="text" id="pe-heroSubtitle" class="admin-input" /></div>
+          </div>
+          <div class="admin-card">
+            <h4>Sobre nosotras</h4>
+            <div class="form-group"><label>Título</label><input type="text" id="pe-aboutTitle" class="admin-input" /></div>
+            <div class="form-group"><label>Texto principal</label><textarea id="pe-aboutText" class="admin-input" rows="4"></textarea></div>
+          </div>
+          <div class="admin-card">
+            <h4>Footer</h4>
+            <div class="form-group"><label>Descripción del footer</label><textarea id="pe-footerDesc" class="admin-input" rows="3"></textarea></div>
+          </div>
+          <div class="admin-card">
+            <h4>Horario</h4>
+            <div id="schedule-editor"><!-- JS --></div>
+            <button class="btn-sm btn-primary" onclick="addScheduleRow()"><i class="fas fa-plus"></i> Añadir fila</button>
+          </div>
+        </div>
+        <div class="toolbar-actions" style="margin-top:20px">
+          <button class="btn-primary" id="save-page-content-btn"><i class="fas fa-save"></i> Guardar cambios</button>
+          <button class="btn-secondary" onclick="resetPageContent()"><i class="fas fa-undo"></i> Restaurar defaults</button>
+        </div>
+      </section>
+
+      <!-- ===== RECEIPTS ===== -->
+      <section class="admin-section hidden" id="sec-receipts">
+        <div class="section-toolbar">
+          <h3>Recibos</h3>
+          <button class="btn-primary" onclick="openReceiptModal()"><i class="fas fa-plus"></i> Crear recibo</button>
+          <button class="btn-export" onclick="exportCSV('receipts')"><i class="fas fa-download"></i> CSV</button>
+        </div>
+        <div class="table-wrap" id="receipts-table"><!-- JS --></div>
+      </section>
+
+      <!-- ===== CONFIG ===== -->
+      <section class="admin-section hidden" id="sec-config">
+        <div class="section-toolbar"><h3>Configuración general</h3></div>
+        <div class="editor-grid">
+          <div class="admin-card">
+            <h4>Información del negocio</h4>
+            <div class="form-group"><label>Nombre del negocio</label><input type="text" id="cfg-name" class="admin-input" value="Peace and Love Studio PR" /></div>
+            <div class="form-group"><label>Teléfono / WhatsApp</label><input type="text" id="cfg-phone" class="admin-input" value="787-228-4063" /></div>
+            <div class="form-group"><label>Ubicación</label><input type="text" id="cfg-location" class="admin-input" value="Barranquitas, Puerto Rico" /></div>
+            <div class="form-group"><label>Correo del administrador</label><input type="email" id="cfg-email" class="admin-input" /></div>
+          </div>
+          <div class="admin-card">
+            <h4>Redes sociales</h4>
+            <div class="form-group"><label>Instagram URL</label><input type="text" id="cfg-ig" class="admin-input" value="https://www.instagram.com/peaceandlovestudiopr" /></div>
+            <div class="form-group"><label>Facebook URL</label><input type="text" id="cfg-fb" class="admin-input" value="https://www.facebook.com/share/1E9R9ckDog/" /></div>
+          </div>
+          <div class="admin-card">
+            <h4>Google Calendar</h4>
+            <div class="form-group"><label>Webhook URL de Apps Script</label><input type="text" id="cfg-calendar-webhook" class="admin-input" placeholder="https://script.google.com/macros/s/..." /></div>
+            <div class="form-group"><label>Secreto compartido</label><input type="text" id="cfg-calendar-secret" class="admin-input" placeholder="Tu clave privada para validar solicitudes" /></div>
+            <div class="form-group"><label>Calendar ID</label><input type="text" id="cfg-calendar-id" class="admin-input" value="primary" placeholder="primary o tu calendario@group.calendar.google.com" /></div>
+            <div class="form-group"><label>Zona horaria</label><input type="text" id="cfg-calendar-timezone" class="admin-input" value="America/Puerto_Rico" placeholder="America/Puerto_Rico" /></div>
+            <div class="form-group"><label>Duracion por cita (minutos)</label><input type="number" id="cfg-calendar-duration" class="admin-input" min="15" step="15" value="60" /></div>
+          </div>
+          <div class="admin-card">
+            <h4>Preferencias</h4>
+            <div class="form-group"><label>Idioma predeterminado</label>
+              <select id="cfg-lang" class="admin-select"><option value="es">Español</option><option value="en">English</option></select>
+            </div>
+            <div class="form-group"><label>Tema predeterminado</label>
+              <select id="cfg-theme" class="admin-select"><option value="light">Claro</option><option value="dark">Oscuro</option></select>
+            </div>
+          </div>
+          <div class="admin-card danger-zone">
+            <h4><i class="fas fa-exclamation-triangle"></i> Zona de peligro</h4>
+            <p>Estas acciones son irreversibles.</p>
+            <button class="btn-danger" onclick="confirmClearData()"><i class="fas fa-trash"></i> Limpiar todos los datos</button>
+            <button class="btn-secondary" onclick="confirmResetDemo()"><i class="fas fa-redo"></i> Restaurar datos demo</button>
+          </div>
+        </div>
+          <div style="margin-top:20px; display:flex; gap:10px; align-items:center">
+            <button class="btn-primary" id="save-config-btn"><i class="fas fa-save"></i> Guardar configuración</button>
+            <button class="btn-sm btn-primary" onclick="testCalendarWebhook()"><i class="fas fa-plug"></i> Probar Webhook</button>
+            <small style="color:var(--admin-muted)">Prueba el webhook de Google Apps Script sin salir del panel.</small>
+          </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- ========== MODALS ========== -->
+
+<!-- Confirm Modal -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal-box">
+    <h3 id="confirm-title">¿Estás segura?</h3>
+    <p id="confirm-msg"></p>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeConfirm()">Cancelar</button>
+      <button class="btn-danger" id="confirm-ok">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-overlay" id="detail-modal">
+  <div class="modal-box wide">
+    <button class="modal-close-btn" onclick="closeModal('detail-modal')"><i class="fas fa-times"></i></button>
+    <div id="detail-modal-content"></div>
+  </div>
+</div>
+
+<!-- Edit Appointment Modal -->
+<div class="modal-overlay" id="appt-edit-modal">
+  <div class="modal-box">
+    <button class="modal-close-btn" onclick="closeModal('appt-edit-modal')"><i class="fas fa-times"></i></button>
+    <h3>Editar cita</h3>
+    <input type="hidden" id="edit-appt-id" />
+    <div class="form-group"><label>Nombre</label><input type="text" id="edit-appt-name" class="admin-input" /></div>
+    <div class="form-group"><label>Teléfono</label><input type="text" id="edit-appt-phone" class="admin-input" /></div>
+    <div class="form-group"><label>Correo</label><input type="email" id="edit-appt-email" class="admin-input" /></div>
+    <div class="form-group"><label>Servicio</label><select id="edit-appt-service" class="admin-select service-multi-select" multiple size="5"></select><div id="edit-appt-service-options" class="service-choice-list admin-service-choice-list"></div></div>
+    <div class="form-group"><label>Fecha</label><input type="date" id="edit-appt-date" class="admin-input" /></div>
+    <div class="form-group"><label>Hora</label><select id="edit-appt-time" class="admin-select"></select></div>
+    <div class="form-group"><label>Estado</label>
+      <select id="edit-appt-status" class="admin-select">
+        <option value="pendiente">Pendiente</option>
+        <option value="en proceso">En proceso</option>
+        <option value="aprobada">Aprobada</option>
+        <option value="rechazada">Rechazada</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Comentarios</label><textarea id="edit-appt-comments" class="admin-input" rows="3"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('appt-edit-modal')">Cancelar</button>
+      <button class="btn-secondary" onclick="openAppointmentInGoogleCalendar(document.getElementById('edit-appt-id').value)">Google Calendar</button>
+      <button class="btn-primary" id="save-appt-btn">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Testimony Edit Modal -->
+<div class="modal-overlay" id="test-edit-modal">
+  <div class="modal-box">
+    <button class="modal-close-btn" onclick="closeModal('test-edit-modal')"><i class="fas fa-times"></i></button>
+    <h3>Editar testimonio</h3>
+    <input type="hidden" id="edit-test-id" />
+    <div class="form-group"><label>Nombre</label><input type="text" id="edit-test-name" class="admin-input" /></div>
+    <div class="form-group"><label>Servicio</label><input type="text" id="edit-test-service" class="admin-input" /></div>
+    <div class="form-group"><label>Comentario</label><textarea id="edit-test-comment" class="admin-input" rows="4"></textarea></div>
+    <div class="form-group"><label>Estado</label>
+      <select id="edit-test-status" class="admin-select">
+        <option value="pendiente">Pendiente</option>
+        <option value="aprobado">Aprobado</option>
+        <option value="rechazado">Rechazado</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('test-edit-modal')">Cancelar</button>
+      <button class="btn-primary" id="save-test-btn">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Service Modal -->
+<div class="modal-overlay" id="service-modal">
+  <div class="modal-box">
+    <button class="modal-close-btn" onclick="closeModal('service-modal')"><i class="fas fa-times"></i></button>
+    <h3 id="service-modal-title">Añadir servicio</h3>
+    <input type="hidden" id="edit-svc-id" />
+    <div class="form-group"><label>Nombre (ES)</label><input type="text" id="edit-svc-name" class="admin-input" /></div>
+    <div class="form-group"><label>Nombre (EN)</label><input type="text" id="edit-svc-nameEn" class="admin-input" /></div>
+    <div class="form-group"><label>Precio provisional ($)</label><input type="number" id="edit-svc-price" class="admin-input" min="0" step="0.01" /></div>
+    <div class="form-group"><label>Ícono (Font Awesome class)</label><input type="text" id="edit-svc-icon" class="admin-input" placeholder="fas fa-hand-sparkles" /></div>
+    <div class="form-group"><label>Descripción (ES)</label><textarea id="edit-svc-desc" class="admin-input" rows="3"></textarea></div>
+    <div class="form-group"><label>Descripción (EN)</label><textarea id="edit-svc-descEn" class="admin-input" rows="3"></textarea></div>
+    <div class="form-group check-row">
+      <label><input type="checkbox" id="edit-svc-active" checked /> Activo en el sitio</label>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('service-modal')">Cancelar</button>
+      <button class="btn-primary" id="save-service-btn">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ Modal -->
+<div class="modal-overlay" id="faq-modal">
+  <div class="modal-box">
+    <button class="modal-close-btn" onclick="closeModal('faq-modal')"><i class="fas fa-times"></i></button>
+    <h3 id="faq-modal-title">Añadir pregunta</h3>
+    <input type="hidden" id="edit-faq-id" />
+    <div class="form-group"><label>Pregunta (ES)</label><input type="text" id="edit-faq-q" class="admin-input" /></div>
+    <div class="form-group"><label>Pregunta (EN)</label><input type="text" id="edit-faq-qEn" class="admin-input" /></div>
+    <div class="form-group"><label>Respuesta (ES)</label><textarea id="edit-faq-a" class="admin-input" rows="4"></textarea></div>
+    <div class="form-group"><label>Respuesta (EN)</label><textarea id="edit-faq-aEn" class="admin-input" rows="4"></textarea></div>
+    <div class="form-group check-row">
+      <label><input type="checkbox" id="edit-faq-active" checked /> Activo</label>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('faq-modal')">Cancelar</button>
+      <button class="btn-primary" id="save-faq-btn">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Gallery Item Modal -->
+<div class="modal-overlay" id="gallery-item-modal">
+  <div class="modal-box">
+    <button class="modal-close-btn" onclick="closeModal('gallery-item-modal')"><i class="fas fa-times"></i></button>
+    <h3 id="gallery-modal-title">Añadir trabajo</h3>
+    <input type="hidden" id="edit-gal-id" />
+    <div class="form-group"><label>Título (ES)</label><input type="text" id="edit-gal-title" class="admin-input" /></div>
+    <div class="form-group"><label>Título (EN)</label><input type="text" id="edit-gal-titleEn" class="admin-input" /></div>
+    <div class="form-group"><label>Descripción (ES)</label><textarea id="edit-gal-desc" class="admin-input" rows="2"></textarea></div>
+    <div class="form-group"><label>Descripción (EN)</label><textarea id="edit-gal-descEn" class="admin-input" rows="2"></textarea></div>
+    <div class="form-group"><label>Categoría</label>
+      <select id="edit-gal-cat" class="admin-select">
+        <option value="manicura">Uñas/Manicura</option>
+        <option value="gel">Gel</option>
+        <option value="acrilico">Acrílico</option>
+        <option value="pestanas">Pestañas</option>
+        <option value="pedicura">Pedicura</option>
+      </select>
+    </div>
+    <!-- En producción: conectar con un backend para subir imágenes reales.
+         Por ahora se acepta URL o ruta relativa. -->
+    <div class="form-group"><label>URL imagen "Antes"</label><input type="text" id="edit-gal-before" class="admin-input" placeholder="https://... o assets/images/..." /></div>
+    <div class="form-group"><label>URL imagen "Después"</label><input type="text" id="edit-gal-after" class="admin-input" placeholder="https://... o assets/images/..." /></div>
+    <div class="form-group check-row">
+      <label><input type="checkbox" id="edit-gal-active" checked /> Activo en el sitio</label>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('gallery-item-modal')">Cancelar</button>
+      <button class="btn-primary" id="save-gallery-btn">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Receipt Modal -->
+<div class="modal-overlay" id="receipt-modal">
+  <div class="modal-box wide">
+    <button class="modal-close-btn" onclick="closeModal('receipt-modal')"><i class="fas fa-times"></i></button>
+    <h3>Crear recibo</h3>
+    <input type="hidden" id="edit-rec-id" />
+    <div class="receipt-form-grid">
+      <div class="form-group"><label>Nombre del cliente</label><input type="text" id="rec-client" class="admin-input" /></div>
+      <div class="form-group"><label>Teléfono</label><input type="text" id="rec-phone" class="admin-input" /></div>
+      <div class="form-group"><label>Correo</label><input type="email" id="rec-email" class="admin-input" /></div>
+      <div class="form-group"><label>Servicio realizado</label><select id="rec-service" class="admin-select"></select></div>
+      <div class="form-group"><label>Fecha</label><input type="date" id="rec-date" class="admin-input" /></div>
+      <div class="form-group"><label>Precio ($)</label><input type="number" id="rec-price" class="admin-input" min="0" step="0.01" /></div>
+      <div class="form-group"><label>Descuento ($)</label><input type="number" id="rec-discount" class="admin-input" min="0" step="0.01" value="0" /></div>
+      <div class="form-group"><label>Método de pago</label>
+        <select id="rec-payment" class="admin-select">
+          <option value="efectivo">Efectivo</option>
+          <option value="tarjeta">Tarjeta</option>
+          <option value="transferencia">Transferencia</option>
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group"><label>Notas adicionales</label><textarea id="rec-notes" class="admin-input" rows="2"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('receipt-modal')">Cancelar</button>
+      <button class="btn-primary" id="save-receipt-btn"><i class="fas fa-save"></i> Guardar y ver recibo</button>
+    </div>
+  </div>
+</div>
+
+<!-- View Receipt Modal -->
+<div class="modal-overlay" id="view-receipt-modal">
+  <div class="modal-box wide">
+    <button class="modal-close-btn" onclick="closeModal('view-receipt-modal')"><i class="fas fa-times"></i></button>
+    <div id="receipt-preview"><!-- JS --></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('view-receipt-modal')">Cerrar</button>
+      <button class="btn-primary" onclick="printReceipt()"><i class="fas fa-print"></i> Imprimir / Guardar PDF</button>
+      <button class="btn-wa" onclick="shareReceiptWA()" style="background:#25d366;color:#fff;padding:10px 20px;border-radius:50px;font-weight:600"><i class="fab fa-whatsapp"></i> Compartir</button>
+    </div>
+  </div>
+</div>
+
+<script src="supabase-sync.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Peace and Love Studio PR – Uñas & Belleza en Barranquitas, Puerto Rico</title>
+  <meta name="description" content="Estudio de uñas y belleza en Barranquitas, Puerto Rico. Manicura, pedicura, gel, acrílico y extensiones de pestañas." />
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <!-- EmailJS -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="light-mode" data-lang="es">
+
+  <!-- ========== TOAST NOTIFICATIONS ========== -->
+  <div id="toast-container" aria-live="polite"></div>
+
+  <!-- ========== HEADER ========== -->
+  <header id="main-header">
+    <div class="header-inner">
+      <a href="#inicio" class="logo" aria-label="Peace and Love Studio PR">
+        <span class="logo-script">Peace & Love</span>
+        <span class="logo-sub">Studio PR</span>
+      </a>
+      <nav class="main-nav" id="main-nav" aria-label="Navegación principal">
+        <ul>
+          <li><a href="#inicio" data-i18n="nav.home">Inicio</a></li>
+          <li><a href="#servicios" data-i18n="nav.services">Servicios</a></li>
+          <li><a href="#reservar" data-i18n="nav.book">Reservar cita</a></li>
+          <li><a href="#galeria" data-i18n="nav.gallery">Galería</a></li>
+          <li><a href="#resenas" data-i18n="nav.reviews">Reseñas</a></li>
+          <li><a href="#nosotros" data-i18n="nav.about">Sobre nosotros</a></li>
+          <li><a href="#faq" data-i18n="nav.faq">FAQ</a></li>
+          <li><a href="#contacto" data-i18n="nav.contact">Contacto</a></li>
+        </ul>
+      </nav>
+      <div class="header-actions">
+        <a href="#reservar" class="btn-header-book" data-i18n="header.bookBtn">Reservar</a>
+        <a href="https://www.instagram.com/peaceandlovestudiopr" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram" data-social-link="instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.facebook.com/share/1E9R9ckDog/" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Facebook" data-social-link="facebook"><i class="fab fa-facebook-f"></i></a>
+        <button class="hamburger" id="hamburger" aria-label="Abrir menú" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <!-- Mobile Drawer -->
+    <div class="mobile-drawer" id="mobile-drawer" aria-hidden="true">
+      <div class="drawer-inner">
+        <button class="drawer-close" id="drawer-close" aria-label="Cerrar menú"><i class="fas fa-times"></i></button>
+        <nav aria-label="Menú móvil">
+          <ul>
+            <li><a href="#inicio" data-i18n="nav.home">Inicio</a></li>
+            <li><a href="#servicios" data-i18n="nav.services">Servicios</a></li>
+            <li><a href="#reservar" data-i18n="nav.book">Reservar cita</a></li>
+            <li><a href="#galeria" data-i18n="nav.gallery">Galería</a></li>
+            <li><a href="#resenas" data-i18n="nav.reviews">Reseñas</a></li>
+            <li><a href="#nosotros" data-i18n="nav.about">Sobre nosotros</a></li>
+            <li><a href="#faq" data-i18n="nav.faq">FAQ</a></li>
+            <li><a href="#contacto" data-i18n="nav.contact">Contacto</a></li>
+          </ul>
+        </nav>
+        <div class="drawer-extras">
+          <div class="drawer-toggle-row">
+            <span data-i18n="menu.language">Idioma</span>
+            <div class="toggle-switch-wrap">
+              <button class="lang-btn" id="lang-es" aria-label="Español">ES</button>
+              <button class="lang-btn" id="lang-en" aria-label="English">EN</button>
+            </div>
+          </div>
+          <div class="drawer-toggle-row">
+            <span data-i18n="menu.theme">Tema</span>
+            <label class="toggle-switch" aria-label="Cambiar tema">
+              <input type="checkbox" id="theme-toggle" />
+              <span class="slider-toggle"><i class="fas fa-sun"></i><i class="fas fa-moon"></i></span>
+            </label>
+          </div>
+          <a href="admin.html" class="drawer-admin-link"><i class="fas fa-lock"></i> <span data-i18n="menu.admin">Panel Admin</span></a>
+        </div>
+      </div>
+    </div>
+    <div class="drawer-overlay" id="drawer-overlay"></div>
+  </header>
+
+  <!-- ========== HERO ========== -->
+  <section id="inicio" class="hero">
+    <div class="hero-bg">
+      <div class="hero-blob blob1"></div>
+      <div class="hero-blob blob2"></div>
+      <div class="hero-blob blob3"></div>
+      <div class="hero-petals">
+        <span class="petal p1">✦</span>
+        <span class="petal p2">❋</span>
+        <span class="petal p3">✿</span>
+        <span class="petal p4">✦</span>
+        <span class="petal p5">❀</span>
+        <span class="petal p6">✦</span>
+      </div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-badge" data-i18n="hero.badge">✦ Barranquitas, Puerto Rico ✦</div>
+      <h1 class="hero-title" id="hero-title">Peace and Love<br><em>Studio PR</em></h1>
+      <p class="hero-sub" id="hero-subtitle" data-i18n="hero.subtitle">Belleza, cuidado y estilo en cada detalle</p>
+      <div class="hero-btns">
+        <a href="#reservar" class="btn-primary" data-i18n="hero.bookBtn">Reservar cita</a>
+        <a href="#servicios" class="btn-ghost" data-i18n="hero.servicesBtn">Ver servicios</a>
+      </div>
+      <div class="hero-social">
+        <a href="https://wa.me/17872284063?text=Hola%2C%20me%20gustar%C3%ADa%20reservar%20una%20cita%20en%20Peace%20and%20Love%20Studio%20PR." target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" data-social-link="whatsapp" data-wa-mode="booking"><i class="fab fa-whatsapp"></i></a>
+        <a href="https://www.instagram.com/peaceandlovestudiopr" target="_blank" rel="noopener noreferrer" aria-label="Instagram" data-social-link="instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.facebook.com/share/1E9R9ckDog/" target="_blank" rel="noopener noreferrer" aria-label="Facebook" data-social-link="facebook"><i class="fab fa-facebook-f"></i></a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-frame">
+        <div class="hero-nail-art">
+          <div class="nail n1"></div>
+          <div class="nail n2"></div>
+          <div class="nail n3"></div>
+          <div class="nail n4"></div>
+          <div class="nail n5"></div>
+        </div>
+        <div class="hero-deco-text">✦ beauty & care ✦</div>
+      </div>
+    </div>
+    <a href="#servicios" class="hero-scroll-hint" aria-label="Scroll"><i class="fas fa-chevron-down"></i></a>
+  </section>
+
+  <!-- ========== SERVICES ========== -->
+  <section id="servicios" class="services-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="services.tag">Nuestros Servicios</span>
+        <h2 data-i18n="services.title">Arte y cuidado en cada detalle</h2>
+        <p data-i18n="services.subtitle">Cada servicio es una experiencia diseñada para hacerte sentir hermosa y especial.</p>
+      </div>
+      <div class="services-grid" id="services-grid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== BOOKING FORM ========== -->
+  <section id="reservar" class="booking-section">
+    <div class="container">
+      <div class="booking-layout">
+        <div class="booking-info">
+          <span class="section-tag" data-i18n="booking.tag">Reserva tu cita</span>
+          <h2 data-i18n="booking.title">¿Lista para tu próxima cita?</h2>
+          <p data-i18n="booking.desc">Completa el formulario y nos pondremos en contacto contigo para confirmar todos los detalles.</p>
+          <div class="booking-steps">
+            <div class="step"><span class="step-num">01</span><span data-i18n="booking.step1">Llena el formulario</span></div>
+            <div class="step"><span class="step-num">02</span><span data-i18n="booking.step2">Recibe confirmación</span></div>
+            <div class="step"><span class="step-num">03</span><span data-i18n="booking.step3">¡Disfruta tu servicio!</span></div>
+          </div>
+          <div class="booking-calendar-preview" id="booking-calendar">
+            <!-- Mini calendar rendered by JS -->
+          </div>
+        </div>
+        <div class="booking-form-wrap">
+          <form id="booking-form" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="b-name" data-i18n="form.name">Nombre completo *</label>
+                <input type="text" id="b-name" name="name" placeholder="Tu nombre" autocomplete="name" required />
+                <span class="form-error" id="err-name"></span>
+              </div>
+              <div class="form-group">
+                <label for="b-phone" data-i18n="form.phone">Teléfono *</label>
+                <input type="tel" id="b-phone" name="phone" placeholder="787-000-0000" autocomplete="tel" required />
+                <span class="form-error" id="err-phone"></span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="b-email" data-i18n="form.email">Correo electrónico *</label>
+              <input type="email" id="b-email" name="email" placeholder="tu@correo.com" autocomplete="email" required />
+              <span class="form-error" id="err-email"></span>
+            </div>
+            <div class="form-group">
+              <label for="b-service" data-i18n="form.service">Servicio deseado *</label>
+              <select id="b-service" name="service" class="service-multi-select" multiple size="5">
+              </select>
+              <div class="service-picker" id="b-service-picker">
+                <button type="button" id="b-service-trigger" class="service-picker-trigger" aria-expanded="false" aria-controls="b-service-dropdown">
+                  Selecciona uno o varios servicios
+                  <i class="fas fa-chevron-down"></i>
+                </button>
+                <div id="b-service-dropdown" class="service-picker-dropdown" hidden>
+                  <div id="b-service-options" class="service-choice-list"></div>
+                </div>
+              </div>
+              <small class="form-hint">Puedes seleccionar uno o varios servicios.</small>
+              <div id="b-service-estimate" class="service-estimate">Aproximado: $0.00</div>
+              <span class="form-error" id="err-service"></span>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="b-date" data-i18n="form.date">Fecha deseada *</label>
+                <input type="date" id="b-date" name="date" required />
+                <span class="form-error" id="err-date"></span>
+              </div>
+              <div class="form-group">
+                <label for="b-time" data-i18n="form.time">Hora deseada *</label>
+                <select id="b-time" name="time" required>
+                  <option value="" data-i18n="form.selectTime">-- Selecciona hora --</option>
+                </select>
+                <span class="form-error" id="err-time"></span>
+              </div>
+            </div>
+            <div id="availability-msg" class="availability-msg" aria-live="polite"></div>
+            <div class="form-group">
+              <label for="b-comments" data-i18n="form.comments">Comentarios adicionales</label>
+              <textarea id="b-comments" name="comments" rows="3" placeholder="Algún diseño especial, referencia, alergias..."></textarea>
+            </div>
+            <div class="form-group">
+              <label data-i18n="form.contactPref">Preferencia de contacto</label>
+              <div class="radio-group">
+                <label class="radio-label"><input type="radio" name="contactPref" value="whatsapp" checked /><i class="fab fa-whatsapp"></i> WhatsApp</label>
+                <label class="radio-label"><input type="radio" name="contactPref" value="call" /><i class="fas fa-phone"></i> <span data-i18n="form.call">Llamada</span></label>
+                <label class="radio-label"><input type="radio" name="contactPref" value="email" /><i class="fas fa-envelope"></i> <span data-i18n="form.emailLabel">Correo</span></label>
+              </div>
+            </div>
+            <button type="submit" class="btn-primary btn-full" id="submit-booking" data-i18n="form.submitBtn">
+              <i class="fas fa-calendar-check"></i> Solicitar cita
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== GALLERY ========== -->
+  <section id="galeria" class="gallery-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="gallery.tag">Nuestro trabajo</span>
+        <h2 data-i18n="gallery.title">Antes & Después</h2>
+        <p data-i18n="gallery.subtitle">Desliza para descubrir la transformación.</p>
+      </div>
+      <div class="gallery-filters" id="gallery-filters">
+        <button class="filter-btn active" data-cat="all" data-i18n="gallery.all">Todos</button>
+        <button class="filter-btn" data-cat="manicura" data-i18n="gallery.manicura">Uñas</button>
+        <button class="filter-btn" data-cat="gel" data-i18n="gallery.gel">Gel</button>
+        <button class="filter-btn" data-cat="acrilico" data-i18n="gallery.acrilico">Acrílico</button>
+        <button class="filter-btn" data-cat="pestanas" data-i18n="gallery.pestanas">Pestañas</button>
+        <button class="filter-btn" data-cat="pedicura" data-i18n="gallery.pedicura">Pedicura</button>
+      </div>
+      <div class="gallery-grid" id="gallery-grid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== LOVE WALL / REVIEWS ========== -->
+  <section id="resenas" class="reviews-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="reviews.tag">Testimonios</span>
+        <h2 data-i18n="reviews.title">Muro de Amor</h2>
+        <p data-i18n="reviews.subtitle">Palabras reales de clientas que amamos.</p>
+      </div>
+      <div class="love-wall" id="love-wall">
+        <!-- Rendered by JS -->
+      </div>
+      <!-- Testimony Form -->
+      <div class="testimony-form-wrap">
+        <h3 data-i18n="reviews.shareTitle">¿Quieres compartir tu experiencia?</h3>
+        <form id="testimony-form" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="t-name" data-i18n="form.name">Nombre *</label>
+              <input type="text" id="t-name" name="name" required />
+            </div>
+            <div class="form-group">
+              <label for="t-service" data-i18n="form.service">Servicio recibido *</label>
+              <select id="t-service" name="service" required>
+                <option value="">-- Selecciona --</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label data-i18n="reviews.rating">Calificación *</label>
+            <div class="star-rating" id="star-rating" role="group" aria-label="Calificación de 1 a 5 estrellas">
+              <button type="button" class="star" data-val="1" aria-label="1 estrella">★</button>
+              <button type="button" class="star" data-val="2" aria-label="2 estrellas">★</button>
+              <button type="button" class="star" data-val="3" aria-label="3 estrellas">★</button>
+              <button type="button" class="star" data-val="4" aria-label="4 estrellas">★</button>
+              <button type="button" class="star" data-val="5" aria-label="5 estrellas">★</button>
+            </div>
+            <input type="hidden" id="t-rating" name="rating" value="0" />
+          </div>
+          <div class="form-group">
+            <label for="t-comment" data-i18n="reviews.comment">Comentario *</label>
+            <textarea id="t-comment" name="comment" rows="3" required></textarea>
+          </div>
+          <button type="submit" class="btn-primary" data-i18n="reviews.submitBtn"><i class="fas fa-heart"></i> Enviar testimonio</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== ABOUT ========== -->
+  <section id="nosotros" class="about-section">
+    <div class="container about-layout">
+      <div class="about-visual">
+        <div class="about-card-deco">
+          <div class="deco-circle c1"></div>
+          <div class="deco-circle c2"></div>
+          <div class="about-quote-card">
+            <span class="quote-mark">❝</span>
+            <p data-i18n="about.quote">Cada detalle importa, cada clienta es única.</p>
+            <span class="quote-attr">— Peace and Love Studio PR</span>
+          </div>
+        </div>
+      </div>
+      <div class="about-content">
+        <span class="section-tag" data-i18n="about.tag">Sobre nosotras</span>
+        <h2 id="about-title" data-i18n="about.title">Más que un estudio,<br>una experiencia</h2>
+        <p id="about-text" data-i18n="about.text">En Peace and Love Studio PR creemos que cada servicio es una experiencia de cuidado, belleza y confianza. Nuestro objetivo es que cada clienta se sienta cómoda, atendida y feliz con cada detalle, desde una manicura sencilla hasta un diseño más elaborado o unas extensiones de pestañas que resalten su mirada.</p>
+        <p data-i18n="about.text2">Estamos ubicados en Barranquitas, Puerto Rico, ofreciendo servicios de manicura, pedicura, gel, acrílico y extensiones de pestañas con dedicación, amor y atención personalizada.</p>
+        <div class="about-features">
+          <div class="feature"><i class="fas fa-heart"></i><span data-i18n="about.f1">Con amor</span></div>
+          <div class="feature"><i class="fas fa-star"></i><span data-i18n="about.f2">Calidad premium</span></div>
+          <div class="feature"><i class="fas fa-hand-sparkles"></i><span data-i18n="about.f3">Personalizado</span></div>
+          <div class="feature"><i class="fas fa-map-marker-alt"></i><span data-i18n="about.f4">Barranquitas, PR</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FAQ ========== -->
+  <section id="faq" class="faq-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="faq.tag">FAQ</span>
+        <h2 data-i18n="faq.title">Preguntas frecuentes</h2>
+      </div>
+      <div class="faq-list" id="faq-list">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SUGGESTIONS ========== -->
+  <section id="sugerencias" class="suggestions-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="suggestions.tag">Sugerencias</span>
+        <h2 data-i18n="suggestions.title">Ayúdanos a mejorar</h2>
+        <p data-i18n="suggestions.subtitle">Tu opinión nos importa y nos ayuda a crecer.</p>
+      </div>
+      <div class="suggestions-layout">
+        <form id="suggestion-form" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="s-name" data-i18n="form.name">Nombre *</label>
+              <input type="text" id="s-name" name="name" required />
+            </div>
+            <div class="form-group">
+              <label for="s-email" data-i18n="form.email">Correo (opcional)</label>
+              <input type="email" id="s-email" name="email" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="s-type" data-i18n="suggestions.type">Tipo de sugerencia *</label>
+            <select id="s-type" name="type" required>
+              <option value="" data-i18n="form.selectService">-- Selecciona --</option>
+              <option value="servicio" data-i18n="suggestions.typeService">Servicio</option>
+              <option value="pagina" data-i18n="suggestions.typeWeb">Página web</option>
+              <option value="atencion" data-i18n="suggestions.typeService2">Atención</option>
+              <option value="ambiente" data-i18n="suggestions.typeAmbient">Ambiente</option>
+              <option value="otro" data-i18n="suggestions.typeOther">Otro</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="s-message" data-i18n="suggestions.message">Mensaje *</label>
+            <textarea id="s-message" name="message" rows="4" required></textarea>
+          </div>
+          <button type="submit" class="btn-primary" data-i18n="suggestions.submit"><i class="fas fa-paper-plane"></i> Enviar sugerencia</button>
+        </form>
+        <div class="suggestions-deco">
+          <div class="sug-icon"><i class="fas fa-comments"></i></div>
+          <p data-i18n="suggestions.decoText">Cada sugerencia nos ayuda a brindarte el mejor servicio posible.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CONTACT ========== -->
+  <section id="contacto" class="contact-section">
+    <div class="container contact-layout">
+      <div class="contact-info">
+        <span class="section-tag" data-i18n="contact.tag">Contacto</span>
+        <h2 data-i18n="contact.title">Comunícate con nosotras</h2>
+        <div class="contact-items">
+          <div class="contact-item"><i class="fab fa-whatsapp"></i><div><strong>WhatsApp</strong><a href="https://wa.me/17872284063" target="_blank" rel="noopener noreferrer" data-social-link="whatsapp" data-whatsapp-text>787-228-4063</a></div></div>
+          <div class="contact-item"><i class="fab fa-instagram"></i><div><strong>Instagram</strong><a href="https://www.instagram.com/peaceandlovestudiopr" target="_blank" rel="noopener noreferrer" data-social-link="instagram" data-instagram-text>@peaceandlovestudiopr</a></div></div>
+          <div class="contact-item"><i class="fab fa-facebook-f"></i><div><strong>Facebook</strong><a href="https://www.facebook.com/share/1E9R9ckDog/" target="_blank" rel="noopener noreferrer" data-social-link="facebook" data-facebook-text>Peace and Love Studio PR</a></div></div>
+          <div class="contact-item"><i class="fas fa-map-marker-alt"></i><div><strong data-i18n="contact.location">Ubicación</strong><span>Barranquitas, Puerto Rico</span></div></div>
+        </div>
+      </div>
+      <div class="contact-side">
+        <div class="schedule-box">
+          <h4><i class="fas fa-clock"></i> <span data-i18n="contact.schedule">Horario</span></h4>
+          <div id="schedule-display">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+        <div class="contact-actions-card">
+          <h3>Atención rápida</h3>
+          <p>Escríbenos por el canal que prefieras y te respondemos lo antes posible.</p>
+          <div class="contact-actions-list">
+            <a href="https://wa.me/17872284063?text=Hola%2C%20me%20gustar%C3%ADa%20reservar%20una%20cita%20en%20Peace%20and%20Love%20Studio%20PR.%20Quiero%20informaci%C3%B3n%20sobre%20los%20servicios%20disponibles." target="_blank" rel="noopener noreferrer" class="contact-action-link" data-social-link="whatsapp" data-wa-mode="booking-info">
+              <i class="fab fa-whatsapp"></i><span>WhatsApp</span>
+            </a>
+            <a href="https://www.instagram.com/peaceandlovestudiopr" target="_blank" rel="noopener noreferrer" class="contact-action-link" data-social-link="instagram">
+              <i class="fab fa-instagram"></i><span>Instagram</span>
+            </a>
+            <a href="https://www.facebook.com/share/1E9R9ckDog/" target="_blank" rel="noopener noreferrer" class="contact-action-link" data-social-link="facebook">
+              <i class="fab fa-facebook-f"></i><span>Facebook</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer id="main-footer">
+    <div class="footer-inner container">
+      <div class="footer-col footer-brand">
+        <div class="footer-logo">
+          <span class="logo-script">Peace & Love</span>
+          <span class="logo-sub">Studio PR</span>
+        </div>
+        <p id="footer-desc" data-i18n="footer.desc">Estudio de uñas y belleza en Barranquitas, Puerto Rico. Belleza, cuidado y amor en cada servicio.</p>
+        <div class="footer-socials">
+          <a href="https://www.instagram.com/peaceandlovestudiopr" target="_blank" rel="noopener noreferrer" aria-label="Instagram" data-social-link="instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.facebook.com/share/1E9R9ckDog/" target="_blank" rel="noopener noreferrer" aria-label="Facebook" data-social-link="facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://wa.me/17872284063" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" data-social-link="whatsapp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer.links">Enlances rápidos</h4>
+        <ul>
+          <li><a href="#inicio" data-i18n="nav.home">Inicio</a></li>
+          <li><a href="#servicios" data-i18n="nav.services">Servicios</a></li>
+          <li><a href="#reservar" data-i18n="nav.book">Reservar cita</a></li>
+          <li><a href="#galeria" data-i18n="nav.gallery">Galería</a></li>
+          <li><a href="#resenas" data-i18n="nav.reviews">Reseñas</a></li>
+          <li><a href="#contacto" data-i18n="nav.contact">Contacto</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer.contact">Contacto</h4>
+        <ul>
+          <li><i class="fab fa-whatsapp"></i> 787-228-4063</li>
+          <li><i class="fas fa-map-marker-alt"></i> Barranquitas, Puerto Rico</li>
+        </ul>
+        <div class="footer-admin-link">
+          <a href="admin.html"><i class="fas fa-lock"></i> <span data-i18n="menu.admin">Panel Admin</span></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p id="footer-copy">© <span data-current-year></span> Peace and Love Studio PR. <span data-i18n="footer.rights">Todos los derechos reservados.</span></p>
+        <button class="back-to-top" id="back-to-top" aria-label="Volver arriba"><i class="fas fa-chevron-up"></i></button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========== FLOATING WHATSAPP ========== -->
+  <a href="https://wa.me/17872284063?text=Hola%2C%20me%20gustar%C3%ADa%20reservar%20una%20cita%20en%20Peace%20and%20Love%20Studio%20PR.%20Quiero%20informaci%C3%B3n%20sobre%20los%20servicios%20disponibles." 
+     target="_blank" rel="noopener noreferrer" class="fab-whatsapp" aria-label="Contactar por WhatsApp" data-social-link="whatsapp" data-wa-mode="booking-info">
+    <i class="fab fa-whatsapp"></i>
+    <span class="fab-tooltip" data-i18n="wa.tooltip">¡Escríbenos!</span>
+  </a>
+
+  <!-- ========== GALLERY MODAL ========== -->
+  <div class="modal-overlay" id="gallery-modal" aria-modal="true" role="dialog" aria-hidden="true">
+    <div class="modal-content gallery-modal-content">
+      <button class="modal-close" id="gallery-modal-close" aria-label="Cerrar"><i class="fas fa-times"></i></button>
+      <div class="before-after-container" id="ba-container">
+        <img class="ba-img ba-before" id="ba-before" src="" alt="Antes" />
+        <img class="ba-img ba-after" id="ba-after" src="" alt="Después" />
+        <div class="ba-slider" id="ba-slider">
+          <div class="ba-handle"><i class="fas fa-chevron-left"></i><i class="fas fa-chevron-right"></i></div>
+        </div>
+        <span class="ba-label ba-label-before" data-i18n="gallery.before">Antes</span>
+        <span class="ba-label ba-label-after" data-i18n="gallery.after">Después</span>
+      </div>
+      <div class="gallery-modal-info">
+        <h3 id="ba-title"></h3>
+        <p id="ba-desc"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="supabase-sync.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
