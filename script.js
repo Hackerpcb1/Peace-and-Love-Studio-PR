@@ -826,6 +826,29 @@ function renderServices() {
     </div>`;
 
   grid.innerHTML = html;
+  syncServiceCardReveal();
+}
+
+function syncServiceCardReveal() {
+  const cards = document.querySelectorAll('#services-grid .service-card');
+  if (!cards.length) return;
+
+  const isMobile = window.matchMedia && window.matchMedia('(max-width: 860px)').matches;
+  const revealReady = document.body && document.body.dataset.scrollRevealReady === 'true';
+
+  cards.forEach((card, index) => {
+    if (isMobile) {
+      card.classList.add('revealed');
+      card.classList.remove('scroll-reveal', 'reveal-up');
+      card.style.removeProperty('--reveal-delay');
+      return;
+    }
+
+    if (revealReady) {
+      card.classList.add('scroll-reveal', 'reveal-up', 'revealed');
+      card.style.setProperty('--reveal-delay', `${Math.min(index * 90, 420)}ms`);
+    }
+  });
 }
 
 function selectService(name) {
@@ -1752,6 +1775,26 @@ function initActiveNav() {
    17. SCROLL REVEAL
    ============================================================ */
 function initScrollReveal() {
+  if (document.body) {
+    document.body.dataset.scrollRevealReady = 'true';
+  }
+
+  const revealTargetsImmediately = () => {
+    document.querySelectorAll('.scroll-reveal, section, .service-card, .gallery-item, .love-card, .faq-item, .contact-item, .feature, .booking-form-wrap, .booking-info, .testimony-form-wrap, .contact-wa-card, .about-content, .about-visual, .suggestions-deco, .suggestions-layout form, .schedule-box').forEach(el => {
+      el.classList.add('revealed');
+    });
+  };
+
+  if (!('IntersectionObserver' in window)) {
+    revealTargetsImmediately();
+    return;
+  }
+
+  if (window.matchMedia && window.matchMedia('(max-width: 860px)').matches) {
+    revealTargetsImmediately();
+    return;
+  }
+
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -1807,6 +1850,8 @@ function initScrollReveal() {
       observer.observe(el);
     });
   });
+
+  window.setTimeout(revealTargetsImmediately, 1800);
 }
 
 /* ============================================================
